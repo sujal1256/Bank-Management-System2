@@ -22,10 +22,11 @@ struct Loan
 struct BankAccount
 {
     int accountNumber;
-    float balance;
+    double balance;
     int customerID;                     // Link to the customer
-    int transactions[MAX_TRANSACTIONS]; // Positive for deposit, negative for withdrawal
+    float transactions[MAX_TRANSACTIONS]; // Positive for deposit, negative for withdrawal
     int transactionCount;
+    int pin;
 };
 
 struct Customer
@@ -49,7 +50,7 @@ int bankAccountCount = 0;
 
 // Function declarations
 void createCustomer(char name[], char phoneNumber[], char aadharNumber[], char profession[], float income, int age);
-void createBankAccount(int customerID, int amount, int pin);
+void createBankAccount(int customerID, float amount, int pin);
 void showMenu();
 void showLoginScreen();
 void printAllCustomersAndAccounts();
@@ -70,6 +71,14 @@ int main()
 
     showLoginScreen();
     return 0;
+}
+
+int inputPIN()
+{
+    int pin;
+    printf("Enter PIN: ");
+    scanf("%d", &pin);
+    return pin;
 }
 
 // Function to create a customer
@@ -113,17 +122,23 @@ void addDefaultCustomers()
 }
 
 // Function to create a bank account
-void createBankAccount(int customerID, int amount, int pin)
+void createBankAccount(int customerID, float amount, int pin)
 {
+    if(amount < 1000){
+        printf("\nMinimum 1000 is required as a initial Deposit for creating a bank account");
+        return;
+    }
     Sleep(600);
     if (bankAccountCount < MAX_CUSTOMERS * MAX_ACCOUNTS_PER_CUSTOMER)
     {
         struct BankAccount newAccount;
 
         newAccount.accountNumber = 10000 + bankAccountCount;
-        newAccount.balance = (float)amount;
+        newAccount.balance = (double)amount;
         newAccount.customerID = customerID;
         newAccount.transactionCount = 0; // Initialize transaction count
+        newAccount.pin = pin; 
+        newAccount.transactions[newAccount.transactionCount++] = amount;
 
         bankAccounts[bankAccountCount] = newAccount;
         bankAccountCount++;
@@ -136,7 +151,55 @@ void createBankAccount(int customerID, int amount, int pin)
         printf("\nCannot create more accounts. Maximum limit reached.\n");
     }
 }
+void showAllTransactions(int customerID)
+{
+    int accountNumber, enteredPin;
+    
+    printf("Enter Account Number: ");
+    scanf("%d", &accountNumber);
 
+    // Search for the account with matching customer ID
+    for (int i = 0; i < bankAccountCount; i++)
+    {
+        if (bankAccounts[i].accountNumber == accountNumber && bankAccounts[i].customerID == customerID)
+        {
+            // Take the PIN input
+            enteredPin = inputPIN();
+            
+            // Check if the entered PIN matches the account's PIN
+            if (bankAccounts[i].pin == enteredPin)
+            {
+                printf("\nAll Transactions for Account Number: %d\n", accountNumber);
+                
+                // Check if there are any transactions
+                if (bankAccounts[i].transactionCount == 0)
+                {
+                    printf("No transactions available.\n");
+                    return;
+                }
+
+                // Print all transactions
+                for (int j = 0; j < bankAccounts[i].transactionCount; j++)
+                {
+                    if (bankAccounts[i].transactions[j] < 0)
+                    {
+                        printf("-%.2f (Withdrawal)\n", -(float)bankAccounts[i].transactions[j]);
+                    }
+                    else
+                    {
+                        printf("+%.2f (Deposit)\n", (float)bankAccounts[i].transactions[j]);
+                    }
+                }
+            }
+            else
+            {
+                printf("\nInvalid PIN. Cannot display transactions.\n");
+            }
+            return;
+        }
+    }
+    printf("\nAccount not found\n");
+}
 // Function to deposit money into a bank account
 void depositMoney(int accountNumber, float amount)
 {
@@ -150,7 +213,7 @@ void depositMoney(int accountNumber, float amount)
             // Record the transaction
             if (bankAccounts[i].transactionCount < MAX_TRANSACTIONS)
             {
-                bankAccounts[i].transactions[bankAccounts[i].transactionCount] = (int)(amount * 100); // Convert to integer to avoid floating point issues
+                bankAccounts[i].transactions[bankAccounts[i].transactionCount] = (amount); // Convert to integer to avoid floating point issues
                 bankAccounts[i].transactionCount++;
             }
 
@@ -163,6 +226,7 @@ void depositMoney(int accountNumber, float amount)
 }
 
 // Function to withdraw money from a bank account
+
 void withdrawMoney(int accountNumber, float amount)
 {
     Sleep(600);
@@ -170,23 +234,34 @@ void withdrawMoney(int accountNumber, float amount)
     {
         if (bankAccounts[i].accountNumber == accountNumber)
         {
-            if (bankAccounts[i].balance >= amount)
+            // Prompt for the PIN
+            int inputPin = inputPIN();
+
+            // Check if the PIN is correct
+            if (bankAccounts[i].pin == inputPin)
             {
-                bankAccounts[i].balance -= amount;
-
-                // Record the transaction
-                if (bankAccounts[i].transactionCount < MAX_TRANSACTIONS)
+                if (bankAccounts[i].balance >= amount)
                 {
-                    bankAccounts[i].transactions[bankAccounts[i].transactionCount] = -(int)(amount * 100); // Convert to integer to avoid floating point issues
-                    bankAccounts[i].transactionCount++;
-                }
+                    bankAccounts[i].balance -= amount;
 
-                printf("\nWithdrew %.2f from Account Number: %d\n", amount, accountNumber);
-                printf("New Balance: %.2f\n", bankAccounts[i].balance);
+                    // Record the transaction
+                    if (bankAccounts[i].transactionCount < MAX_TRANSACTIONS)
+                    {
+                        bankAccounts[i].transactions[bankAccounts[i].transactionCount] = -(amount); // Convert to integer to avoid floating point issues
+                        bankAccounts[i].transactionCount++;
+                    }
+
+                    printf("\nWithdrew %.2f from Account Number: %d\n", amount, accountNumber);
+                    printf("New Balance: %.2f\n", bankAccounts[i].balance);
+                }
+                else
+                {
+                    printf("\nInsufficient balance.\n");
+                }
             }
             else
             {
-                printf("\nInsufficient balance.\n");
+                printf("\nInvalid PIN. Withdrawal failed.\n");
             }
             return;
         }
@@ -430,11 +505,12 @@ void customerPortal(int customerID)
         printf("1. View My Details\n");
         printf("2. View My Accounts\n");
         printf("3. Create a Bank Account\n");
-        printf("4. Deposit Money\n");
-        printf("5. Withdraw Money\n");
-        printf("6. Apply for a Loan\n");
-        printf("7. Get Back to Login Screen\n");
-        printf("8. Exit\n");
+        printf("4. View all transactions of an account\n");
+        printf("5. Deposit Money\n");
+        printf("6. Withdraw Money\n");
+        printf("7. Apply for a Loan\n");
+        printf("8. Get Back to Login Screen\n");
+        printf("9. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
         getchar(); // Clear newline character from input buffer
@@ -460,22 +536,25 @@ void customerPortal(int customerID)
             Sleep(1000);
             break;
         case 4:
+            showAllTransactions(customerID);
+            break;
+        case 5:
             handleDeposit(customerID);
             Sleep(1000);
             break;
-        case 5:
+        case 6:
             handleWithdrawal(customerID);
             Sleep(1000);
             break;
-        case 6:
+        case 7:
             handleLoanApplication(customerID);
             Sleep(1000);
             break;
-        case 7:
+        case 8:
             showLoginScreen();
             Sleep(1000);
             break;
-        case 8:
+        case 9:
             printf("\nExiting Customer Portal...\n");
             Sleep(1000);
             break;
@@ -484,7 +563,7 @@ void customerPortal(int customerID)
             Sleep(1000);
             break;
         }
-    } while (choice != 7);
+    } while (choice != 9);
 }
 
 // Function to view customer details

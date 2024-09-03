@@ -1,1 +1,11 @@
 ./tempCodeRunnerFile.c
+
+customer_output
+
+*.o
+*.out
+*.exe
+*.a
+
+*~
+*.swp

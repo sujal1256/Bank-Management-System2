@@ -2,6 +2,9 @@
 #include <stdio.h>
 #include <windows.h>
 
+#define ADMIN_USERNAME "bankAdmin"
+#define ADMIN_PASSWORD "admin123"
+
 void showAllCustomers()
 {
     Sleep(600);
@@ -159,9 +162,6 @@ void showTransactions(int accountNumber)
 // {
 // }
 
-
-
-
 void adminPortal()
 {
     Sleep(600);
@@ -208,4 +208,25 @@ void adminPortal()
             printf("\nInvalid choice. Please try again.\n");
         }
     } while (choice != 6);
+}
+
+void handleAdminLogin()
+{
+    char username[50];
+    char password[50];
+
+    printf("Enter admin username: ");
+    scanf("%s", username);
+    printf("Enter admin password: ");
+    scanf("%s", password);
+
+    if (strcmp(username, ADMIN_USERNAME) == 0 && strcmp(password, ADMIN_PASSWORD) == 0)
+    {
+        printf("Login successful!\n");
+        adminPortal();
+    }
+    else
+    {
+        printf("Login failed. Please check your username and/or password.\n");
+    }
 }

@@ -9,7 +9,6 @@ void showLoginScreen()
     int choice;
     do
     {
-        /* code */
 
         Sleep(600);
         printf("\n\n=====================================\n");
@@ -21,14 +20,12 @@ void showLoginScreen()
         printf("3. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
-        getchar(); // Clear newline character from input buffer
-
+        getchar(); 
         switch (choice)
         {
         case 1:
             printf("\nYou selected Admin.\n");
-            // Call the function for Admin login or admin operations
-            adminPortal();
+            handleAdminLogin();
             break;
         case 2:
         {
@@ -51,10 +48,8 @@ void showLoginScreen()
 int main()
 {
     addDefaultCustomers();
-    // loadCustomersFromFile();
     showLoginScreen();
-    saveCustomersToFile(); // Save customers to file before exiting
+    saveCustomersToFile(); 
     return 0;
 }
 
-// Function to save customers to a file

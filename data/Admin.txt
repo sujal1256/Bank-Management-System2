@@ -1,2 +1,2 @@
-Admin username: adminOfBank
+Admin username: bankAdmin
 Admin password: admin123

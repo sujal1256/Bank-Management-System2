@@ -10,17 +10,17 @@
 // Structure to store Loan details
 struct Loan
 {
-    float amount;     // Principal loan amount
-    int timeSpan;     // Time span in years
-    float monthlyEMI; // Monthly EMI
+    float amount;     
+    int timeSpan;     
+    float monthlyEMI; 
 };
 
 struct BankAccount
 {
     int accountNumber;
     double balance;
-    int customerID;                       // Link to the customer
-    float transactions[MAX_TRANSACTIONS]; // Positive for deposit, negative for withdrawal
+    int customerID;                       
+    float transactions[MAX_TRANSACTIONS]; 
     int transactionCount;
     int pin;
 };

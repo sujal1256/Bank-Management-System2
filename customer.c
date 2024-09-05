@@ -10,7 +10,8 @@
 #define MAX_TRANSACTIONS 100
 #define MAX_LOANS 2                   // Maximum number of loans a customer can have
 #define BANK_ANNUAL_INTEREST_RATE 5.0 // Bank's annual interest rate in percent
-#define WIDTH 40
+
+// Structure to store Loan details
 struct Loan
 {
     float amount;     // Principal loan amount
@@ -491,11 +492,10 @@ void customerPortal(int customerID)
         printf("1. View Customer Details\n");
         printf("2. View Bank Accounts\n");
         printf("3. Create a Bank Account\n");
-        printf("4. Delete a Bank Account\n");
-        printf("5. Deposit Money\n");
-        printf("6. Withdraw Money\n");
-        printf("7. Apply for Loan\n");
-        printf("8. Exit\n");
+        printf("4. Deposit Money\n");
+        printf("5. Withdraw Money\n");
+        printf("6. Apply for Loan\n");
+        printf("7. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
         int amount;
@@ -533,126 +533,90 @@ void customerPortal(int customerID)
     } while (choice != 8);
 }
 
-void showLoginScreen()
+int handleCustomerLogin()
 {
-    int choice;
-    Sleep(600);
-    printf("\n\n=====================================\n");
-    printf("  Welcome to Bank Management System  \n");
-    printf("=====================================\n");
-    printf("Please select an option:\n");
-    printf("1. Admin\n");
-    printf("2. Customer\n");
-    printf("3. Create New Customer\n");
-    printf("4. Exit\n");
-    printf("Enter your choice: ");
-    scanf("%d", &choice);
-    getchar(); // Clear newline character from input buffer
-
-    switch (choice)
+    if (customerCount == 0)
     {
-    case 1:
-        printf("\nYou selected Admin.\n");
-        // Call the function for Admin login or admin operations
-        break;
-    case 2:
-    {
-        printf("\nYou selected Customer.\n");
+        printf("\nNo customers found. Please create a customer first.\n");
+        return 0;
+    }
 
-        if (customerCount == 0)
+    int customerID;
+    int customerIndex = -1;
+    printf("Enter your Customer ID: ");
+    scanf("%d", &customerID);
+    getchar(); // Clear newline character
+
+    // Check if the customer exists and find the index
+    for (int i = 0; i < customerCount; i++)
+    {
+        if (customers[i].customerID == customerID)
         {
-            printf("\nNo customers found. Please create a customer first.\n");
+            customerIndex = i;
             break;
         }
+    }
 
-        int customerID;
-        int customerIndex = -1;
-        printf("Enter your Customer ID: ");
-        scanf("%d", &customerID);
-        getchar(); // Clear newline character
-
-        // Check if the customer exists and find the index
-        for (int i = 0; i < customerCount; i++)
+    if (customerIndex == -1)
+    {
+        printf("\nNo customer found with the entered ID.\n");
+        // showLoginScreen(); // Call the login screen function
+        return -1;
+    }
+    else
+    {
+        // Check if the customer has a bank account
+        int hasAccount = 0;
+        for (int i = 0; i < bankAccountCount; i++)
         {
-            if (customers[i].customerID == customerID)
+            if (bankAccounts[i].customerID == customerID)
             {
-                customerIndex = i;
+                hasAccount = 1;
                 break;
             }
         }
 
-        if (customerIndex == -1)
+        if (!hasAccount)
         {
-            printf("\nNo customer found with the entered ID.\n");
-            showLoginScreen(); // Call the login screen function
-            break;
+            printf("\nNo bank account found for this customer. Please create an account first.\n");
+            createBankAccount(customerID, 1000, customerID);
         }
-        else
-        {
-            // Check if the customer has a bank account
-            int hasAccount = 0;
-            for (int i = 0; i < bankAccountCount; i++)
-            {
-                if (bankAccounts[i].customerID == customerID)
-                {
-                    hasAccount = 1;
-                    break;
-                }
-            }
 
-            if (!hasAccount)
-            {
-                printf("\nNo bank account found for this customer. Please create an account first.\n");
-                createBankAccount(customerID, 1000, customerID);
-            }
-
-            // Call customer portal function if account exists or after creating a new account
-            customerPortal(customerID);
-        }
-        break;
+        // Call customer portal function if account exists or after creating a new account
+        customerPortal(customerID);
     }
-    case 3:
-        printf("\nCreate New Customer.\n");
+    return 0;
+}
+void handleCustomerSignup()
+{
+    char name[50], phoneNumber[15], aadharNumber[20], profession[30];
+    float income = 0;
+    int age = 0;
 
-        char name[50];
-        char phoneNumber[15];
-        char aadharNumber[20];
-        char profession[30];
-        float income;
-        int age;
+    getchar();
+    printf("Enter Name: ");
+    fgets(name, sizeof(name), stdin);
+    name[strcspn(name, "\n")] = 0; // Remove newline character if present
 
-        printf("Enter Name: ");
-        fgets(name, sizeof(name), stdin);
-        name[strcspn(name, "\n")] = 0; // Remove newline character
+    printf("Enter Phone Number: ");
+    fgets(phoneNumber, sizeof(phoneNumber), stdin);
+    phoneNumber[strcspn(phoneNumber, "\n")] = 0; // Remove newline character if present
 
-        printf("Enter Phone Number: ");
-        fgets(phoneNumber, sizeof(phoneNumber), stdin);
-        phoneNumber[strcspn(phoneNumber, "\n")] = 0; // Remove newline character
+    printf("Enter Aadhar Number: ");
+    fgets(aadharNumber, sizeof(aadharNumber), stdin);
+    aadharNumber[strcspn(aadharNumber, "\n")] = 0; // Remove newline character if present
 
-        printf("Enter Aadhar Number: ");
-        fgets(aadharNumber, sizeof(aadharNumber), stdin);
-        aadharNumber[strcspn(aadharNumber, "\n")] = 0; // Remove newline character
+    printf("Enter Profession: ");
+    fgets(profession, sizeof(profession), stdin);
+    profession[strcspn(profession, "\n")] = 0; // Remove newline character if present
 
-        printf("Enter Profession: ");
-        fgets(profession, sizeof(profession), stdin);
-        profession[strcspn(profession, "\n")] = 0; // Remove newline character
+    printf("Enter Income: ");
+    scanf("%f", &income);
+    getchar(); // Consume the newline character after scanf
 
-        printf("Enter Income: ");
-        scanf("%f", &income);
+    printf("Enter Age: ");
+    scanf("%d", &age);
+    getchar(); // Consume the newline character after scanf
 
-        printf("Enter Age: ");
-        scanf("%d", &age);
-        getchar(); // Clear newline character
-
-        createCustomer(name, phoneNumber, aadharNumber, profession, income, age);
-        showLoginScreen();
-        break;
-    case 4:
-        printf("\nExiting...\n");
-        break;
-    default:
-        printf("\nInvalid choice.\n");
-        showLoginScreen();
-        break;
-    }
+    createCustomer(name, phoneNumber, aadharNumber, profession, income, age);
 }

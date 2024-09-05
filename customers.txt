@@ -1,4 +1,4 @@
-Customer Count: 5
+Customer Count: 4
 
 
 Customer ID: 1000
@@ -50,18 +50,5 @@ Age: 40
 Loans: 0
 Accounts: 2
 	Account 4 - Account Number: 10003, Balance: 1000.00, Transaction Count: 1
-		Transaction 1: 1000.00
-
-
-Customer ID: 1004
-Name: Check them
-Phone Number: 1002911
-Aadhar Number: 123131
-Profession: 1sdad
-Income: 312312.00
-Age: 1312
-Loans: 0
-Accounts: 2
-	Account 5 - Account Number: 10004, Balance: 1000.00, Transaction Count: 1
 		Transaction 1: 1000.00
 

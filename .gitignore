@@ -1,6 +1,7 @@
 ./tempCodeRunnerFile.c
 
 customer_output
+admin_output
 
 *.o
 *.out

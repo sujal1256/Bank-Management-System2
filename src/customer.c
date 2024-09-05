@@ -9,21 +9,21 @@
 #define MAX_ACCOUNTS_PER_CUSTOMER 2
 #define MAX_TRANSACTIONS 100
 #define MAX_LOANS 2                   // Maximum number of loans a customer can have
-#define BANK_ANNUAL_INTEREST_RATE 5.0 // Bank's annual interest rate in percent
+#define BANK_ANNUAL_INTEREST_RATE 5.0 // Bank's annual interest rate in percentage
 
 // Structure to store Loan details
 struct Loan
 {
-    float amount;     // Principal loan amount
-    int timeSpan;     // Time span in years
-    float monthlyEMI; // Monthly EMI
+    float amount;     
+    int timeSpan;     
+    float monthlyEMI;
 };
 
 struct BankAccount
 {
     int accountNumber;
     double balance;
-    int customerID;                       // Link to the customer
+    int customerID;                       
     float transactions[MAX_TRANSACTIONS]; // Positive for deposit, negative for withdrawal
     int transactionCount;
     int pin;
@@ -115,7 +115,7 @@ void createCustomer(char name[], char phoneNumber[], char aadharNumber[], char p
         newCustomer.income = income;
         newCustomer.age = age;
         newCustomer.customerID = 1000 + customerCount;
-        newCustomer.loanCount = 0; // Initialize loan count
+        newCustomer.loanCount = 0; 
 
         customers[customerCount] = newCustomer;
         customerCount++;
@@ -135,16 +135,16 @@ void createCustomer(char name[], char phoneNumber[], char aadharNumber[], char p
 
 void addDefaultCustomers()
 {
-    createCustomer("John Doe", "1234567890", "1234-5678-9012", "Engineer", 60000.0, 30);
-    createCustomer("Jane Smith", "0987654321", "9876-5432-1098", "Doctor", 80000.0, 35);
-    createCustomer("Alice Johnson", "1112233445", "1111-2233-4455", "Teacher", 50000.0, 28);
-    createCustomer("Bob Brown", "2223344556", "2222-3344-5566", "Artist", 40000.0, 40);
+    createCustomer("Mukesh Duhan", "9012325544", "9763-5403-6989", "Engineer", 60000.0, 30);
+    createCustomer("Anmol Singh", "9812025544", "9876-5432-1098", "Doctor", 80000.0, 35);
+    createCustomer("Virat Kohli", "9896078121", "8012-2738-4804", "Cricketer", 50000.0, 28);
+    createCustomer("Varun Pruthi", "9873254671", "7592-5285-1951", "Video Creator", 40000.0, 40);
 }
 
 // Function to save customers to a file
 void saveCustomersToFile()
 {
-    FILE *file = fopen("customers.txt", "w"); // Open file in text write mode
+    FILE *file = fopen("./data/customers.txt", "w"); 
     if (file == NULL)
     {
         printf("\nError opening file for saving customers.\n");
@@ -191,7 +191,7 @@ void saveCustomersToFile()
     }
 
     fclose(file);
-    printf("\nCustomers saved to file successfully in human-readable format.\n");
+    printf("\nCustomers saved to file successfully.\n");
 }
 
 // Function to create a bank account
@@ -234,8 +234,6 @@ void deleteBankAccount(int customerID)
 void showAllTransactions(int customerID, int accountNumber)
 {
 
-    // printf("Enter Account Number: ");
-    // scanf("%d", &accountNumber);
 
     // Search for the account with matching customer ID
     for (int i = 0; i < bankAccountCount; i++)
@@ -243,17 +241,14 @@ void showAllTransactions(int customerID, int accountNumber)
         if (bankAccounts[i].accountNumber == accountNumber && bankAccounts[i].customerID == customerID)
         {
 
-            // Check if the entered PIN matches the account's PIN
             printf("\nAll Transactions for Account Number: %d\n", accountNumber);
 
-            // Check if there are any transactions
             if (bankAccounts[i].transactionCount == 0)
             {
                 printf("No transactions available.\n");
                 return;
             }
 
-            // Print all transactions
             for (int j = 0; j < bankAccounts[i].transactionCount; j++)
             {
                 if (bankAccounts[i].transactions[j] < 0)
@@ -281,10 +276,10 @@ void depositMoney(int accountNumber, float amount)
         {
             bankAccounts[i].balance += amount;
 
-            // Record the transaction
+            // +(amount) for deposit
             if (bankAccounts[i].transactionCount < MAX_TRANSACTIONS)
             {
-                bankAccounts[i].transactions[bankAccounts[i].transactionCount] = (amount); // Convert to integer to avoid floating point issues
+                bankAccounts[i].transactions[bankAccounts[i].transactionCount] = (amount); 
                 bankAccounts[i].transactionCount++;
             }
 
@@ -312,10 +307,8 @@ void withdrawMoney(int accountNumber, float amount)
     {
         if (bankAccounts[i].accountNumber == accountNumber)
         {
-            // Prompt for the PIN
             int inputPin = inputPIN();
 
-            // Check if the PIN is correct
             if (bankAccounts[i].pin != inputPin)
             {
                 printf("\nIncorrect PIN. Cannot proceed with the withdrawal.\n");
@@ -327,10 +320,10 @@ void withdrawMoney(int accountNumber, float amount)
             {
                 bankAccounts[i].balance -= amount;
 
-                // Record the transaction
+                // -(amount for withdrawl)
                 if (bankAccounts[i].transactionCount < MAX_TRANSACTIONS)
                 {
-                    bankAccounts[i].transactions[bankAccounts[i].transactionCount] = -(amount); // Convert to integer to avoid floating point issues
+                    bankAccounts[i].transactions[bankAccounts[i].transactionCount] = -(amount); 
                     bankAccounts[i].transactionCount++;
                 }
 
@@ -442,8 +435,17 @@ void applyForLoan(int customerID, float loanAmount, int timeSpan)
                 struct Loan newLoan;
                 newLoan.amount = loanAmount;
                 newLoan.timeSpan = timeSpan;
-                newLoan.monthlyEMI = (loanAmount * BANK_ANNUAL_INTEREST_RATE / 100) / (12 * timeSpan);
+                
+                int n = timeSpan * 12; // Number of Installments
 
+                // Monthly interest rate
+                float monthlyInterestRate = BANK_ANNUAL_INTEREST_RATE / 12 / 100;
+
+                // EMI 
+                float numerator = loanAmount * monthlyInterestRate * pow(1 + monthlyInterestRate, n);
+
+                float denominator = pow(1 + monthlyInterestRate, n) - 1;
+                newLoan.monthlyEMI = numerator / denominator;
                 if (newLoan.monthlyEMI > customers[i].income * 0.5)
                 {
                     printf("\nLoan cannot be approved. EMI exceeds 50%% of your monthly income.\n");
@@ -492,10 +494,11 @@ void customerPortal(int customerID)
         printf("1. View Customer Details\n");
         printf("2. View Bank Accounts\n");
         printf("3. Create a Bank Account\n");
-        printf("4. Deposit Money\n");
-        printf("5. Withdraw Money\n");
-        printf("6. Apply for Loan\n");
-        printf("7. Exit\n");
+        printf("4. Delete Account\n");
+        printf("5. Deposit Money\n");
+        printf("6. Withdraw Money\n");
+        printf("7. Apply for Loan\n");
+        printf("8. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
         int amount;
@@ -545,7 +548,7 @@ int handleCustomerLogin()
     int customerIndex = -1;
     printf("Enter your Customer ID: ");
     scanf("%d", &customerID);
-    getchar(); // Clear newline character
+    getchar(); 
 
     // Check if the customer exists and find the index
     for (int i = 0; i < customerCount; i++)
@@ -560,12 +563,11 @@ int handleCustomerLogin()
     if (customerIndex == -1)
     {
         printf("\nNo customer found with the entered ID.\n");
-        // showLoginScreen(); // Call the login screen function
         return -1;
     }
     else
     {
-        // Check if the customer has a bank account
+        // if the customer has a bank account
         int hasAccount = 0;
         for (int i = 0; i < bankAccountCount; i++)
         {
@@ -582,7 +584,6 @@ int handleCustomerLogin()
             createBankAccount(customerID, 1000, customerID);
         }
 
-        // Call customer portal function if account exists or after creating a new account
         customerPortal(customerID);
     }
     return 0;
@@ -596,27 +597,27 @@ void handleCustomerSignup()
     getchar();
     printf("Enter Name: ");
     fgets(name, sizeof(name), stdin);
-    name[strcspn(name, "\n")] = 0; // Remove newline character if present
+    name[strcspn(name, "\n")] = 0; 
 
     printf("Enter Phone Number: ");
     fgets(phoneNumber, sizeof(phoneNumber), stdin);
-    phoneNumber[strcspn(phoneNumber, "\n")] = 0; // Remove newline character if present
+    phoneNumber[strcspn(phoneNumber, "\n")] = 0; 
 
     printf("Enter Aadhar Number: ");
     fgets(aadharNumber, sizeof(aadharNumber), stdin);
-    aadharNumber[strcspn(aadharNumber, "\n")] = 0; // Remove newline character if present
+    aadharNumber[strcspn(aadharNumber, "\n")] = 0; 
 
     printf("Enter Profession: ");
     fgets(profession, sizeof(profession), stdin);
-    profession[strcspn(profession, "\n")] = 0; // Remove newline character if present
+    profession[strcspn(profession, "\n")] = 0; 
 
     printf("Enter Income: ");
     scanf("%f", &income);
-    getchar(); // Consume the newline character after scanf
+    getchar(); 
 
     printf("Enter Age: ");
     scanf("%d", &age);
-    getchar(); // Consume the newline character after scanf
+    getchar(); 
 
     createCustomer(name, phoneNumber, aadharNumber, profession, income, age);
 }

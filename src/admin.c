@@ -1,63 +1,6 @@
-#include "customers.h"
+#include "../Headers/customers.h"
 #include <stdio.h>
-#include <stdlib.h>
 #include <windows.h>
-
-void showAllCustomers();
-void showBankAccountDetails(int accountNumber);
-void showAllAccounts();
-void showLoans(int customerID);
-void showTransactions(int accountNumber);
-void handleAdminLogin();
-
-void adminPortal()
-{
-    Sleep(600);
-    int choice;
-    do
-    {
-        printf("\nAdmin Portal\n");
-        printf("1. View All Customers\n");
-        printf("2. View All Bank Accounts\n");
-        printf("3. Add New Customer\n");
-        printf("4. Delete Customer\n");
-        printf("5. View Customer Loans\n");
-        printf("6. View Bank Account Transactions of an Account\n");
-        printf("7. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
-        int customerID;
-        int accountNumber;
-
-        switch (choice)
-        {
-        case 1:
-            showAllCustomers();
-            break;
-        case 2:
-            showAllAccounts();
-            break;
-        case 3:
-            handleCustomerSignup();
-            break;
-        case 4:
-            printf("Enter Customer ID to view loans: ");
-            scanf("%d", &customerID);
-            showLoans(customerID);
-            break;
-        case 5:
-            printf("Enter Bank Account Number to view transactions: ");
-            scanf("%d", &accountNumber);
-            showTransactions(accountNumber);
-            break;
-        case 6:
-            printf("\nExiting Admin Portal.\n");
-            break;
-        default:
-            printf("\nInvalid choice. Please try again.\n");
-        }
-    } while (choice != 6);
-}
 
 void showAllCustomers()
 {
@@ -78,6 +21,7 @@ void showAllCustomers()
 
 void showBankAccountDetails(int accountNumber)
 {
+    Sleep(300);
     for (int i = 0; i < bankAccountCount; i++)
     {
         if (bankAccounts[i].accountNumber == accountNumber)
@@ -116,7 +60,7 @@ void showAllAccounts()
         printf("\nCustomer ID: %d\n", customers[i].customerID);
         printf("Customer Name: %s\n", customers[i].name);
 
-        // Loop through all bank accounts to find those belonging to the current customer
+        // Bank Accounts of current user
         for (int j = 0; j < bankAccountCount; j++)
         {
             if (bankAccounts[j].customerID == customers[i].customerID)
@@ -145,14 +89,12 @@ void showLoans(int customerID)
     Sleep(600);
     int found = 0;
 
-    // Search for the customer with the given ID
     for (int i = 0; i < customerCount; i++)
     {
         if (customers[i].customerID == customerID)
         {
             found = 1;
 
-            // Check if the customer has any loans
             if (customers[i].loanCount == 0)
             {
                 printf("\nCustomer ID: %d has no loans.\n", customerID);
@@ -185,14 +127,12 @@ void showTransactions(int accountNumber)
     Sleep(600);
     int found = 0;
 
-    // Search for the bank account with the given account number
     for (int i = 0; i < bankAccountCount; i++)
     {
         if (bankAccounts[i].accountNumber == accountNumber)
         {
             found = 1;
 
-            // Check if the account has any transactions
             if (bankAccounts[i].transactionCount == 0)
             {
                 printf("\nBank Account Number: %d has no transactions.\n", accountNumber);
@@ -209,7 +149,6 @@ void showTransactions(int accountNumber)
         }
     }
 
-    // If account with given number is not found
     if (!found)
     {
         printf("\nBank Account Number: %d not found.\n", accountNumber);
@@ -220,62 +159,53 @@ void showTransactions(int accountNumber)
 // {
 // }
 
-void showLoginScreen()
+
+
+
+void adminPortal()
 {
+    Sleep(600);
     int choice;
     do
     {
-        /* code */
-
-        Sleep(600);
-        printf("\n\n=====================================\n");
-        printf("  Welcome to Bank Management System  \n");
-        printf("=====================================\n");
-        printf("Please select an option:\n");
-        printf("1. Admin\n");
-        printf("2. Customer\n");
-        printf("3. Create New Customer\n");
-        printf("4. Exit\n");
+        printf("\nAdmin Portal\n");
+        printf("1. View All Customers\n");
+        printf("2. View All Bank Accounts\n");
+        printf("3. Add New Customer\n");
+        printf("4. View Customer Loans\n");
+        printf("5. View Bank Account Transactions of an Account\n");
+        printf("6. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
-        getchar(); // Clear newline character from input buffer
+        int customerID;
+        int accountNumber;
 
         switch (choice)
         {
         case 1:
-            printf("\nYou selected Admin.\n");
-            // Call the function for Admin login or admin operations
-            adminPortal();
+            showAllCustomers();
             break;
         case 2:
-        {
-            printf("\nYou selected Customer.\n");
-            int a = handleCustomerLogin(1);
-
+            showAllAccounts();
             break;
-        }
         case 3:
-            printf("\nCreate New Customer.\n");
             handleCustomerSignup();
             break;
         case 4:
-            printf("\nExiting...\n");
+            printf("Enter Customer ID to view loans: ");
+            scanf("%d", &customerID);
+            showLoans(customerID);
+            break;
+        case 5:
+            printf("Enter Bank Account Number to view transactions: ");
+            scanf("%d", &accountNumber);
+            showTransactions(accountNumber);
+            break;
+        case 6:
+            printf("\nExiting Admin Portal.\n");
             break;
         default:
-            printf("\nInvalid choice.\n");
-            showLoginScreen();
-            break;
+            printf("\nInvalid choice. Please try again.\n");
         }
-    } while (choice != 4);
+    } while (choice != 6);
 }
-
-int main()
-{
-    addDefaultCustomers();
-    // loadCustomersFromFile();
-    showLoginScreen();
-    saveCustomersToFile(); // Save customers to file before exiting
-    return 0;
-}
-
-// Function to save customers to a file

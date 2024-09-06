@@ -2,10 +2,15 @@ CC = gcc
 BIN_DIR = bin
 BUILD_DIR = build
 SRC_DIR = src
-INCLUDE_DIR = include
+
+ifeq ($(OS),Windows_NT)
+    EXT = .exe
+else
+    EXT = .o
+endif
 
 # Ensure bin/ and build/ directories are created
-all: $(BIN_DIR)/test_output
+all: $(BIN_DIR)/test_output${EXT}
 
 # Customer-related build
 $(BUILD_DIR)/customer_output.o: $(SRC_DIR)/customer.c | $(BUILD_DIR)
@@ -22,8 +27,8 @@ $(BUILD_DIR)/lib_admin.a: $(BUILD_DIR)/admin_output.o
 	ar rcs $(BUILD_DIR)/lib_admin.a $(BUILD_DIR)/admin_output.o
 
 # Linking both libraries into the final executable
-$(BIN_DIR)/test_output: $(SRC_DIR)/main.c $(BUILD_DIR)/lib_customer.a $(BUILD_DIR)/lib_admin.a | $(BIN_DIR)
-	$(CC) -o $(BIN_DIR)/test_output $(SRC_DIR)/main.c -L. $(BUILD_DIR)/lib_customer.a $(BUILD_DIR)/lib_admin.a
+$(BIN_DIR)/test_output${EXT}: $(SRC_DIR)/main.c $(BUILD_DIR)/lib_customer.a $(BUILD_DIR)/lib_admin.a | $(BIN_DIR)
+	$(CC) -o $(BIN_DIR)/test_output${EXT} $(SRC_DIR)/main.c -L. $(BUILD_DIR)/lib_customer.a $(BUILD_DIR)/lib_admin.a -lm
 
 # Create bin/ directory if it doesn't exist
 $(BIN_DIR):
@@ -38,5 +43,5 @@ clean:
 	rm -rf $(BUILD_DIR) $(BIN_DIR)
 
 # Compile and run the program
-run: $(BIN_DIR)/test_output
-	./$(BIN_DIR)/test_output
+run: $(BIN_DIR)/test_output${EXT}
+	./$(BIN_DIR)/test_output${EXT}

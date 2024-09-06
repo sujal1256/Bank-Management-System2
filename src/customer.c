@@ -1,9 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
+#ifdef _WIN32
 #include <windows.h>
+#else
 #include <unistd.h>
 #include <math.h>
+#define Sleep(x) usleep((x) * 1000)
+#endif
 
 #define MAX_CUSTOMERS 100
 #define MAX_ACCOUNTS_PER_CUSTOMER 2
@@ -14,8 +19,8 @@
 // Structure to store Loan details
 struct Loan
 {
-    float amount;     
-    int timeSpan;     
+    float amount;
+    int timeSpan;
     float monthlyEMI;
 };
 
@@ -23,7 +28,7 @@ struct BankAccount
 {
     int accountNumber;
     double balance;
-    int customerID;                       
+    int customerID;
     float transactions[MAX_TRANSACTIONS]; // Positive for deposit, negative for withdrawal
     int transactionCount;
     int pin;
@@ -115,7 +120,7 @@ void createCustomer(char name[], char phoneNumber[], char aadharNumber[], char p
         newCustomer.income = income;
         newCustomer.age = age;
         newCustomer.customerID = 1000 + customerCount;
-        newCustomer.loanCount = 0; 
+        newCustomer.loanCount = 0;
 
         customers[customerCount] = newCustomer;
         customerCount++;
@@ -144,7 +149,7 @@ void addDefaultCustomers()
 // Function to save customers to a file
 void saveCustomersToFile()
 {
-    FILE *file = fopen("./data/customers.txt", "w"); 
+    FILE *file = fopen("./data/customers.txt", "w");
     if (file == NULL)
     {
         printf("\nError opening file for saving customers.\n");
@@ -202,7 +207,7 @@ void deleteBankAccount(int customerID)
     scanf("%d", &accountNumber);
     getchar();
     char ask_for_confirmation;
-    printf("Are you sure you want to delete %d account?\n(y/n): ");
+    printf("Are you sure you want to delete %d account?\n(y/n): ", accountNumber);
     scanf("%c", &ask_for_confirmation);
 
     if (ask_for_confirmation == 'y' || ask_for_confirmation == 'Y')
@@ -233,7 +238,6 @@ void deleteBankAccount(int customerID)
 
 void showAllTransactions(int customerID, int accountNumber)
 {
-
 
     // Search for the account with matching customer ID
     for (int i = 0; i < bankAccountCount; i++)
@@ -279,7 +283,7 @@ void depositMoney(int accountNumber, float amount)
             // +(amount) for deposit
             if (bankAccounts[i].transactionCount < MAX_TRANSACTIONS)
             {
-                bankAccounts[i].transactions[bankAccounts[i].transactionCount] = (amount); 
+                bankAccounts[i].transactions[bankAccounts[i].transactionCount] = (amount);
                 bankAccounts[i].transactionCount++;
             }
 
@@ -323,7 +327,7 @@ void withdrawMoney(int accountNumber, float amount)
                 // -(amount for withdrawl)
                 if (bankAccounts[i].transactionCount < MAX_TRANSACTIONS)
                 {
-                    bankAccounts[i].transactions[bankAccounts[i].transactionCount] = -(amount); 
+                    bankAccounts[i].transactions[bankAccounts[i].transactionCount] = -(amount);
                     bankAccounts[i].transactionCount++;
                 }
 
@@ -435,13 +439,13 @@ void applyForLoan(int customerID, float loanAmount, int timeSpan)
                 struct Loan newLoan;
                 newLoan.amount = loanAmount;
                 newLoan.timeSpan = timeSpan;
-                
+
                 int n = timeSpan * 12; // Number of Installments
 
                 // Monthly interest rate
                 float monthlyInterestRate = BANK_ANNUAL_INTEREST_RATE / 12 / 100;
 
-                // EMI 
+                // EMI
                 float numerator = loanAmount * monthlyInterestRate * pow(1 + monthlyInterestRate, n);
 
                 float denominator = pow(1 + monthlyInterestRate, n) - 1;
@@ -548,7 +552,7 @@ int handleCustomerLogin()
     int customerIndex = -1;
     printf("Enter your Customer ID: ");
     scanf("%d", &customerID);
-    getchar(); 
+    getchar();
 
     // Check if the customer exists and find the index
     for (int i = 0; i < customerCount; i++)
@@ -597,27 +601,27 @@ void handleCustomerSignup()
     getchar();
     printf("Enter Name: ");
     fgets(name, sizeof(name), stdin);
-    name[strcspn(name, "\n")] = 0; 
+    name[strcspn(name, "\n")] = 0;
 
     printf("Enter Phone Number: ");
     fgets(phoneNumber, sizeof(phoneNumber), stdin);
-    phoneNumber[strcspn(phoneNumber, "\n")] = 0; 
+    phoneNumber[strcspn(phoneNumber, "\n")] = 0;
 
     printf("Enter Aadhar Number: ");
     fgets(aadharNumber, sizeof(aadharNumber), stdin);
-    aadharNumber[strcspn(aadharNumber, "\n")] = 0; 
+    aadharNumber[strcspn(aadharNumber, "\n")] = 0;
 
     printf("Enter Profession: ");
     fgets(profession, sizeof(profession), stdin);
-    profession[strcspn(profession, "\n")] = 0; 
+    profession[strcspn(profession, "\n")] = 0;
 
     printf("Enter Income: ");
     scanf("%f", &income);
-    getchar(); 
+    getchar();
 
     printf("Enter Age: ");
     scanf("%d", &age);
-    getchar(); 
+    getchar();
 
     createCustomer(name, phoneNumber, aadharNumber, profession, income, age);
 }

@@ -1,8 +1,14 @@
 #include "../Headers/admin.h"
 #include "../Headers/customers.h"
 #include <stdio.h>
+#include <string.h>
 #include <stdlib.h>
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h>
+#define Sleep(x) usleep((x) * 1000)
+#endif
 
 void showLoginScreen()
 {

@@ -1,6 +1,12 @@
 #include "../Headers/customers.h"
 #include <stdio.h>
+#ifdef _WIN32
 #include <windows.h>
+#else
+#include <unistd.h> 
+#define Sleep(x) usleep((x) * 1000)
+#endif
+#include <string.h>
 
 #define ADMIN_USERNAME "bankAdmin"
 #define ADMIN_PASSWORD "admin123"

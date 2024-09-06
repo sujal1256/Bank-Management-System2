@@ -2,9 +2,9 @@ Customer Count: 4
 
 
 Customer ID: 1000
-Name: John Doe
-Phone Number: 1234567890
-Aadhar Number: 1234-5678-9012
+Name: Mukesh Duhan
+Phone Number: 9012325544
+Aadhar Number: 9763-5403-6989
 Profession: Engineer
 Income: 60000.00
 Age: 30
@@ -15,8 +15,8 @@ Accounts: 2
 
 
 Customer ID: 1001
-Name: Jane Smith
-Phone Number: 0987654321
+Name: Anmol Singh
+Phone Number: 9812025544
 Aadhar Number: 9876-5432-1098
 Profession: Doctor
 Income: 80000.00
@@ -25,13 +25,17 @@ Loans: 0
 Accounts: 2
 	Account 2 - Account Number: 10001, Balance: 1000.00, Transaction Count: 1
 		Transaction 1: 1000.00
+	Account 5 - Account Number: 10004, Balance: 10000.00, Transaction Count: 3
+		Transaction 1: 19000.00
+		Transaction 2: 1000.00
+		Transaction 3: -10000.00
 
 
 Customer ID: 1002
-Name: Alice Johnson
-Phone Number: 1112233445
-Aadhar Number: 1111-2233-4455
-Profession: Teacher
+Name: Virat Kohli
+Phone Number: 9896078121
+Aadhar Number: 8012-2738-4804
+Profession: Cricketer
 Income: 50000.00
 Age: 28
 Loans: 0
@@ -41,10 +45,10 @@ Accounts: 2
 
 
 Customer ID: 1003
-Name: Bob Brown
-Phone Number: 2223344556
-Aadhar Number: 2222-3344-5566
-Profession: Artist
+Name: Varun Pruthi
+Phone Number: 9873254671
+Aadhar Number: 7592-5285-1951
+Profession: Video Creator
 Income: 40000.00
 Age: 40
 Loans: 0

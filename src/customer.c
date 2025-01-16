@@ -1,6 +1,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
+#include <ctype.h>
 #include <math.h>
 #ifdef _WIN32
 #include <windows.h>
@@ -592,36 +594,162 @@ int handleCustomerLogin()
     }
     return 0;
 }
+bool isValidString(char name[])
+{
+    if (name == NULL || name[0] == '\0')
+    {
+        printf("\033[1;31mEnter valid input\033[0m\n");
+        return false;
+    }
+
+    for (int i = 0; name[i] != '\0'; i++)
+    {
+        if (name[i] == ' ')
+        {
+            continue;
+        }
+        if (!isalpha(name[i]))
+        {
+            printf("\033[1;31mEnter valid input\033[0m\n");
+            return false;
+        }
+    }
+    return true;
+}
+
+bool isValidNumber(char phone[])
+{
+    if (phone == NULL || phone[0] == '\0')
+    {
+        printf("\033[1;31mEnter valid input\033[0m\n");
+        return false;
+    }
+    for (int i = 0; phone[i] != '\0'; i++)
+    {
+        if (!isdigit(phone[i]))
+        {
+            printf("\033[1;31mEnter valid input\033[0m\n");
+            return false;
+        }
+    }
+    return true;
+}
+
+void trim(char *str)
+{
+    if (str == NULL || str[0] == '\0')
+    {
+        return;
+    }
+
+    int start = 0, end = strlen(str) - 1;
+
+    while (isspace(str[start]))
+    {
+        start++;
+    }
+
+    while (end >= start && isspace(str[end]))
+    {
+        end--;
+    }
+
+    if (start > end)
+    {
+        str[0] = '\0';
+        return;
+    }
+
+    int i, j = 0;
+    for (i = start; i <= end; i++)
+    {
+        str[j++] = str[i];
+    }
+    str[j] = '\0';
+}
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+void clearInputBuffer()
+{
+    while (getchar() != '\n' && getchar() != EOF)
+        ;
+}
+
 void handleCustomerSignup()
 {
-    char name[50], phoneNumber[15], aadharNumber[20], profession[30];
-    float income = 0;
-    int age = 0;
+    char name[20], phoneNumber[15], aadharNumber[13], profession[30];
+    float income = -1;
+    int age = -1;
 
     getchar();
-    printf("Enter Name: ");
-    fgets(name, sizeof(name), stdin);
-    name[strcspn(name, "\n")] = 0;
+    do
+    {
+        printf("Enter Name: ");
+        fgets(name, sizeof(name), stdin);
+        name[strcspn(name, "\n")] = '\0';
+        trim(name);
 
-    printf("Enter Phone Number: ");
-    fgets(phoneNumber, sizeof(phoneNumber), stdin);
-    phoneNumber[strcspn(phoneNumber, "\n")] = 0;
+        clearInputBuffer();
+    } while (!isValidString(name));
 
-    printf("Enter Aadhar Number: ");
-    fgets(aadharNumber, sizeof(aadharNumber), stdin);
-    aadharNumber[strcspn(aadharNumber, "\n")] = 0;
+    do
+    {
+        printf("Enter Phone Number: ");
+        fgets(phoneNumber, sizeof(phoneNumber), stdin);
+        phoneNumber[strcspn(phoneNumber, "\n")] = 0;
+        trim(phoneNumber);
 
-    printf("Enter Profession: ");
-    fgets(profession, sizeof(profession), stdin);
-    profession[strcspn(profession, "\n")] = 0;
+        clearInputBuffer();
 
-    printf("Enter Income: ");
-    scanf("%f", &income);
-    getchar();
+    } while (!isValidNumber(phoneNumber));
 
-    printf("Enter Age: ");
-    scanf("%d", &age);
-    getchar();
+    do
+    {
+        printf("Enter Aadhar Number: ");
+        fgets(aadharNumber, sizeof(aadharNumber), stdin);
+        aadharNumber[strcspn(aadharNumber, "\n")] = 0;
+        trim(aadharNumber);
+
+        clearInputBuffer();
+
+    } while (!isValidNumber(aadharNumber));
+
+    do
+    {
+        printf("Enter Profession: ");
+        fgets(profession, sizeof(profession), stdin);
+        profession[strcspn(profession, "\n")] = 0;
+        trim(profession);
+
+        clearInputBuffer();
+    } while (!isValidString(profession));
+
+    do
+    {
+        printf("Enter Income: ");
+        scanf("%f", &income);
+        clearInputBuffer();
+
+        if (income < 0)
+        {
+            printf("\033[1;31mEnter valid input\033[0m\n");
+        }
+    } while (income < 0);
+
+    do
+    {
+        printf("Enter Age: ");
+        scanf("%d", &age);
+        clearInputBuffer();
+
+        if (age <= 0 || age > 80)
+        {
+            printf("\033[1;31mEnter valid input\033[0m\n");
+        }
+    } while (age <= 0 || age > 80);
 
     createCustomer(name, phoneNumber, aadharNumber, profession, income, age);
 }

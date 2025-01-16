@@ -62,6 +62,44 @@ int deletedCount = 0;
 
 int deletedAccountNumbers[MAX_CUSTOMERS * MAX_ACCOUNTS_PER_CUSTOMER];
 
+void clearInputBuffer()
+{
+    while (getchar() != '\n' && getchar() != EOF)
+        ;
+}
+
+void trim(char *str)
+{
+    if (str == NULL || str[0] == '\0')
+    {
+        return;
+    }
+
+    int start = 0, end = strlen(str) - 1;
+
+    while (isspace(str[start]))
+    {
+        start++;
+    }
+
+    while (end >= start && isspace(str[end]))
+    {
+        end--;
+    }
+
+    if (start > end)
+    {
+        str[0] = '\0';
+        return;
+    }
+
+    int i, j = 0;
+    for (i = start; i <= end; i++)
+    {
+        str[j++] = str[i];
+    }
+    str[j] = '\0';
+}
 int getNextAccountNumber()
 {
     if (deletedCount > 0)
@@ -205,9 +243,21 @@ void saveCustomersToFile()
 void deleteBankAccount(int customerID)
 {
     int accountNumber;
-    printf("Enter account number you want to delete: ");
-    scanf("%d", &accountNumber);
-    getchar();
+    int validInput = 0;
+    do
+    {
+        printf("Enter account number you want to delete: ");
+        if (scanf("%d", &accountNumber) == 1)
+        {
+            validInput = 1;
+        }
+        if (validInput == 0)
+        {
+            printf("\033[1;31mEnter valid input\033[0m\n");
+        }
+        clearInputBuffer();
+    } while (!validInput);
+
     char ask_for_confirmation;
     printf("Are you sure you want to delete %d account?\n(y/n): ", accountNumber);
     scanf("%c", &ask_for_confirmation);
@@ -234,7 +284,8 @@ void deleteBankAccount(int customerID)
                 return;
             }
         }
-        printf("\nAccount Number: %d not found.\n", accountNumber);
+
+        printf("\033[1;31m\nAccount not found.\n\033[0m\n");
     }
 }
 
@@ -348,7 +399,6 @@ void withdrawMoney(int accountNumber, float amount)
 
 void showCustomerDetails(int customerID)
 {
-    Sleep(600);
     for (int i = 0; i < customerCount; i++)
     {
         if (customers[i].customerID == customerID)
@@ -537,7 +587,7 @@ void customerPortal(int customerID)
             printf("\nExiting Customer Portal.\n");
             break;
         default:
-            printf("\nInvalid choice. Please try again.\n");
+            printf("\033[1;31mInvalid choice. Please try again..\033[0m\n");
         }
     } while (choice != 8);
 }
@@ -550,13 +600,24 @@ int handleCustomerLogin()
         return 0;
     }
 
-    int customerID;
+    int customerID = -1;
     int customerIndex = -1;
-    printf("Enter your Customer ID: ");
-    scanf("%d", &customerID);
-    getchar();
+    int validInput = 0;
+    do
+    {
+        printf("Enter your Customer ID: ");
 
-    // Check if the customer exists and find the index
+        if (scanf("%d", &customerID) == 1)
+        {
+            validInput = 1;
+        }
+        else
+        {
+            printf("\033[1;31mInvalid input! Please enter a valid Customer ID.\033[0m\n");
+            clearInputBuffer();
+        }
+    } while (!validInput);
+
     for (int i = 0; i < customerCount; i++)
     {
         if (customers[i].customerID == customerID)
@@ -568,7 +629,7 @@ int handleCustomerLogin()
 
     if (customerIndex == -1)
     {
-        printf("\nNo customer found with the entered ID.\n");
+        printf("\033[1;31mNo customer found with the entered ID.\033[0m\n");
         return -1;
     }
     else
@@ -633,49 +694,6 @@ bool isValidNumber(char phone[])
         }
     }
     return true;
-}
-
-void trim(char *str)
-{
-    if (str == NULL || str[0] == '\0')
-    {
-        return;
-    }
-
-    int start = 0, end = strlen(str) - 1;
-
-    while (isspace(str[start]))
-    {
-        start++;
-    }
-
-    while (end >= start && isspace(str[end]))
-    {
-        end--;
-    }
-
-    if (start > end)
-    {
-        str[0] = '\0';
-        return;
-    }
-
-    int i, j = 0;
-    for (i = start; i <= end; i++)
-    {
-        str[j++] = str[i];
-    }
-    str[j] = '\0';
-}
-
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
-void clearInputBuffer()
-{
-    while (getchar() != '\n' && getchar() != EOF)
-        ;
 }
 
 void handleCustomerSignup()

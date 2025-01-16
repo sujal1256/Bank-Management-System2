@@ -26,7 +26,7 @@ void showLoginScreen()
         printf("3. Exit\n");
         printf("Enter your choice: ");
         scanf("%d", &choice);
-        getchar(); 
+        getchar();
         switch (choice)
         {
         case 1:
@@ -44,7 +44,7 @@ void showLoginScreen()
             printf("\nExiting...\n");
             break;
         default:
-            printf("\nInvalid choice.\n");
+            printf("\033[1;31mInvalid choice. Please try again..\033[0m\n");
             showLoginScreen();
             break;
         }
@@ -55,7 +55,6 @@ int main()
 {
     addDefaultCustomers();
     showLoginScreen();
-    saveCustomersToFile(); 
+    saveCustomersToFile();
     return 0;
 }
-

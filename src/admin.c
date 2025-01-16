@@ -3,14 +3,13 @@
 #ifdef _WIN32
 #include <windows.h>
 #else
-#include <unistd.h> 
+#include <unistd.h>
 #define Sleep(x) usleep((x) * 1000)
 #endif
 #include <string.h>
 
 #define ADMIN_USERNAME "bankAdmin"
 #define ADMIN_PASSWORD "admin123"
-
 void showAllCustomers()
 {
     Sleep(600);
@@ -25,6 +24,8 @@ void showAllCustomers()
     {
         printf("\nCustomer ID: %d\n", customers[i].customerID);
         showCustomerDetails(customers[i].customerID);
+        printf("----------------------------------------\n");
+        Sleep(600);
     }
 }
 
@@ -164,23 +165,35 @@ void showTransactions(int accountNumber)
     }
 }
 
-
-
 void adminPortal()
 {
     Sleep(600);
     int choice;
     do
     {
-        printf("\nAdmin Portal\n");
-        printf("1. View All Customers\n");
-        printf("2. View All Bank Accounts\n");
-        printf("3. Add New Customer\n");
-        printf("4. View Customer Loans\n");
-        printf("5. View Bank Account Transactions of an Account\n");
-        printf("6. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
+
+        do
+        {
+            printf("\nAdmin Portal\n");
+            printf("1. View All Customers\n");
+            printf("2. View All Bank Accounts\n");
+            printf("3. Add New Customer\n");
+            printf("4. View Customer Loans\n");
+            printf("5. View Bank Account Transactions of an Account\n");
+            printf("6. Exit\n");
+
+            printf("Enter your choice: ");
+            if (scanf("%d", &choice) == 1)
+            {
+                break;
+            }
+            else
+            {
+                printf("\033[1;31mEnter valid input\033[0m\n");
+                clearInputBuffer();
+            }
+        } while (TRUE);
+
         int customerID;
         int accountNumber;
 
@@ -196,20 +209,40 @@ void adminPortal()
             handleCustomerSignup();
             break;
         case 4:
-            printf("Enter Customer ID to view loans: ");
-            scanf("%d", &customerID);
+            do
+            {
+                printf("Enter Customer ID to view loans: ");
+                if (scanf("%d", &customerID) == 1)
+                {
+                    break;
+                }
+                else
+                {
+                    printf("\033[1;31mEnter valid input\033[0m\n");
+                    clearInputBuffer();
+                }
+
+            } while (TRUE);
+
             showLoans(customerID);
             break;
         case 5:
-            printf("Enter Bank Account Number to view transactions: ");
-            scanf("%d", &accountNumber);
+            do
+            {
+                printf("Enter Bank Account Number to view transactions: ");
+                if (scanf("%d", &accountNumber) == 1)
+                {
+                    break;
+                }
+            } while (TRUE);
+
             showTransactions(accountNumber);
             break;
         case 6:
             printf("\nExiting Admin Portal.\n");
             break;
         default:
-            printf("\nInvalid choice. Please try again.\n");
+            printf("\033[1;31mInvalid choice. Please try again..\033[0m\n");
         }
     } while (choice != 6);
 }
@@ -221,8 +254,10 @@ void handleAdminLogin()
 
     printf("Enter admin username: ");
     scanf("%s", username);
+    trim(username);
     printf("Enter admin password: ");
     scanf("%s", password);
+    trim(password);
 
     if (strcmp(username, ADMIN_USERNAME) == 0 && strcmp(password, ADMIN_PASSWORD) == 0)
     {

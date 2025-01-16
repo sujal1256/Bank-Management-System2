@@ -50,6 +50,8 @@ extern int deletedCount;
 
 #endif // CUSTOMER_H
 
+void trim(char *arr);
+void clearInputBuffer();
 int getNextAccountNumber();
 
 void createBankAccount(int customerID, float amount, int pin);

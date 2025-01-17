@@ -399,10 +399,13 @@ void withdrawMoney(int accountNumber, float amount)
 
 void showCustomerDetails(int customerID)
 {
+    printf("-------------------------------------------");
+    bool found = 0;
     for (int i = 0; i < customerCount; i++)
     {
         if (customers[i].customerID == customerID)
         {
+            found = 1;
             printf("\nCustomer Details:\n");
             printf("Name: %s\n", customers[i].name);
             printf("Phone Number: %s\n", customers[i].phoneNumber);
@@ -413,7 +416,12 @@ void showCustomerDetails(int customerID)
             return;
         }
     }
-    printf("\nCustomer not found.\n");
+    if (found == 0)
+    {
+        printf("\nCustomer not found.\n");
+    }
+
+    printf("-------------------------------------------");
 }
 
 void viewCustomerAccounts(int customerID)
@@ -446,11 +454,41 @@ void handleDeposit(int customerID)
     int accountNumber;
     float amount;
 
-    printf("Enter Account Number: ");
-    scanf("%d", &accountNumber);
+    do
+    {
+        printf("Enter Account Number: ");
+        if (scanf("%d", &accountNumber) == 1)
+        {
+            break;
+        }
+        else
+        {
+            printf("\033[1;31mInvalid input\033[0m\n");
+        }
 
-    printf("Enter Amount to Deposit: ");
-    scanf("%f", &amount);
+    } while (true);
+
+    do
+    {
+        printf("Enter Amount to Deposit: ");
+        if (scanf("%f", &amount) == 1)
+        {
+            if (amount >= 100)
+            {
+                break;
+            }
+            else
+            {
+                printf("\033[1;31mInvalid amount entered\033[0m\n");
+            }
+        }
+        else
+        {
+            printf("\033[1;31mInvalid input\033[0m\n");
+            clearInputBuffer();
+        }
+
+    } while (true);
 
     depositMoney(accountNumber, amount);
 }
@@ -460,11 +498,41 @@ void handleWithdrawal(int customerID)
     int accountNumber;
     float amount;
 
-    printf("Enter Account Number: ");
-    scanf("%d", &accountNumber);
+    do
+    {
+        printf("Enter Account Number: ");
+        if (scanf("%d", &accountNumber) == 1)
+        {
+            break;
+        }
+        else
+        {
+            printf("\033[1;31mInvalid input\033[0m\n");
+        }
 
-    printf("Enter Amount to Withdraw: ");
-    scanf("%f", &amount);
+    } while (true);
+
+    do
+    {
+        printf("Enter Amount to Withdraw: ");
+        if (scanf("%f", &amount) == 1)
+        {
+            if (amount >= 100)
+            {
+                break;
+            }
+            else
+            {
+                printf("\033[1;31mInvalid amount entered\033[0m\n");
+            }
+        }
+        else
+        {
+            printf("\033[1;31mInvalid input\033[0m\n");
+            clearInputBuffer();
+        }
+
+    } while (true);
 
     withdrawMoney(accountNumber, amount);
 }
@@ -492,7 +560,7 @@ void applyForLoan(int customerID, float loanAmount, int timeSpan)
                 newLoan.amount = loanAmount;
                 newLoan.timeSpan = timeSpan;
 
-                int n = timeSpan * 12; // Number of Installments
+                int n = timeSpan * 12;
 
                 // Monthly interest rate
                 float monthlyInterestRate = BANK_ANNUAL_INTEREST_RATE / 12 / 100;
@@ -531,11 +599,48 @@ void handleLoanApplication(int customerID)
     float loanAmount;
     int timeSpan;
 
-    printf("Enter Loan Amount: ");
-    scanf("%f", &loanAmount);
+    do
+    {
+        printf("Enter Loan Amount: ");
+        if (scanf("%f", &loanAmount) == 1)
+        {
+            if (loanAmount > 500)
+            {
+                break;
+            }
+            else
+            {
+                printf("\033[1;31mLoan amount needs be atleast 500 \033[0m\n");
+            }
+        }
+        else
+        {
+            printf("\033[1;31mInvalid Input\033[0m\n");
+            clearInputBuffer();
+        }
+    } while (true);
 
-    printf("Enter Time Span (in years): ");
-    scanf("%d", &timeSpan);
+    do
+    {
+        printf("Enter Time Span (in years): ");
+        if (scanf("%d", &timeSpan) == 1)
+        {
+            if (timeSpan > 0)
+            {
+                break;
+            }
+            else
+            {
+                printf("\033[1;31mInvalid Input\033[0m\n");
+                clearInputBuffer();
+            }
+        }
+        else
+        {
+            printf("\033[1;31mInvalid Input\033[0m\n");
+            clearInputBuffer();
+        }
+    } while (true);
 
     applyForLoan(customerID, loanAmount, timeSpan);
 }
@@ -555,8 +660,20 @@ void customerPortal(int customerID)
         printf("6. Withdraw Money\n");
         printf("7. Apply for Loan\n");
         printf("8. Exit\n");
-        printf("Enter your choice: ");
-        scanf("%d", &choice);
+        do
+        {
+            printf("Enter your choice: ");
+            if (scanf("%d", &choice) == 1)
+            {
+                break;
+            }
+            else
+            {
+                printf("\033[1;31mInvalid input\033[0m\n");
+                clearInputBuffer();
+            }
+
+        } while (true);
         int amount;
         switch (choice)
         {
@@ -567,8 +684,28 @@ void customerPortal(int customerID)
             viewCustomerAccounts(customerID);
             break;
         case 3:
-            printf("Enter initial deposit: ");
-            scanf("%d", &amount);
+            do
+            {
+
+                printf("Enter initial deposit: ");
+                if (scanf("%d", &amount) == 1)
+                {
+                    if (amount > 1000)
+                    {
+                        break;
+                    }
+                    else
+                    {
+                        printf("\033[1;31mInitial amount needs to be atleast 1000\033[0m\n");
+                    }
+                }
+                else
+                {
+                    printf("\033[1;31mInvalid input\033[0m\n");
+                    clearInputBuffer();
+                }
+            } while (true);
+
             createBankAccount(customerID, amount, customerID);
             break;
         case 4:
@@ -748,26 +885,46 @@ void handleCustomerSignup()
     do
     {
         printf("Enter Income: ");
-        scanf("%f", &income);
-        clearInputBuffer();
 
-        if (income < 0)
+        if (scanf("%f", &income) == 1)
+        {
+            if (income > 1000)
+            {
+                break;
+            }
+            else
+            {
+                printf("\033[1;31mIncome needs to be alleast 1000\033[0m\n");
+            }
+        }
+        else
         {
             printf("\033[1;31mEnter valid input\033[0m\n");
+            clearInputBuffer();
         }
-    } while (income < 0);
+    } while (true);
 
     do
     {
         printf("Enter Age: ");
-        scanf("%d", &age);
+        if (scanf("%d", &age) == 1)
+        {
+            if (age >= 18 && age <= 100)
+            {
+                break;
+            }
+            else
+            {
+                printf("\033[1;31mInvalid input\n");
+            }
+        }
+        else
+        {
+            printf("\033[1;31mInvalid input\033[0m\n");
+        }
         clearInputBuffer();
 
-        if (age <= 0 || age > 80)
-        {
-            printf("\033[1;31mEnter valid input\033[0m\n");
-        }
-    } while (age <= 0 || age > 80);
+    } while (true);
 
     createCustomer(name, phoneNumber, aadharNumber, profession, income, age);
 }
